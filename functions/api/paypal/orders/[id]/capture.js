@@ -29,25 +29,19 @@ export async function onRequestPost({ request, env, params }) {
     });
     const order = await getResponse.json().catch(() => ({}));
     const items = JSON.parse(pending.items_json);
-    if (!getResponse.ok || order.intent !== 'CAPTURE'
+    if (!getResponse.ok || order.intent !== 'CAPTURE' || order.status !== 'APPROVED'
       || order.purchase_units?.length !== 1
       || !matchesCatalogOrder(order.purchase_units[0], items, pending.amount)) {
       throw Object.assign(new Error('The approved PayPal order does not match the store order.'), { status: 409 });
     }
 
-    let captured = order;
-    if (order.status === 'APPROVED') {
-      const response = await fetch(`${base}/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'PayPal-Request-Id': `capture-${orderId}` }
-      });
-      captured = await response.json().catch(() => ({}));
-      if (!response.ok) throw Object.assign(new Error('PayPal did not complete the payment. Please contact support before retrying.'), { status: 502 });
-    } else if (order.status !== 'COMPLETED') {
-      throw Object.assign(new Error('This PayPal order has not been approved.'), { status: 409 });
-    }
+    const response = await fetch(`${base}/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'PayPal-Request-Id': `capture-${orderId}` }
+    });
+    const captured = await response.json().catch(() => ({}));
     const capture = captured.purchase_units?.[0]?.payments?.captures?.[0];
-    if (captured.status !== 'COMPLETED' || capture?.status !== 'COMPLETED'
+    if (!response.ok || captured.status !== 'COMPLETED' || capture?.status !== 'COMPLETED'
       || capture?.amount?.currency_code !== 'USD' || capture?.amount?.value !== pending.amount) {
       throw Object.assign(new Error('PayPal did not complete the payment. Please contact support before retrying.'), { status: 502 });
     }

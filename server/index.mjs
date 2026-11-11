@@ -107,21 +107,7 @@ async function handleApi(req, res, url) {
 
   if (url.pathname === '/api/admin/session' && req.method === 'GET') {
     if (!adminAuthorized(req)) return json(res, 401, { error: 'Admin sign-in required.' });
-    let verified = false;
-    let verificationError = '';
-    if (defaults.PAYPAL_CLIENT_ID && defaults.PAYPAL_CLIENT_SECRET) {
-      try { await paypalToken(); verified = true; }
-      catch { verificationError = 'PayPal could not authorize the configured credentials.'; }
-    }
-    return json(res, 200, {
-      username: defaults.ADMIN_USERNAME,
-      ...publicPayPalConfig(),
-      verified,
-      orderStorageConfigured: true,
-      ready: verified,
-      verificationError,
-      clientIdHint: defaults.PAYPAL_CLIENT_ID ? `••••${defaults.PAYPAL_CLIENT_ID.slice(-6)}` : ''
-    });
+    return json(res, 200, { username: defaults.ADMIN_USERNAME, ...publicPayPalConfig(), clientIdHint: defaults.PAYPAL_CLIENT_ID ? `••••${defaults.PAYPAL_CLIENT_ID.slice(-6)}` : '' });
   }
 
   if (url.pathname === '/api/admin/orders' && req.method === 'GET') {

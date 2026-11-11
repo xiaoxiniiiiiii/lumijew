@@ -62,6 +62,6 @@ export default function PayPalCheckout({ items, fundingSource = 'paypal', onComp
   }, [config, basketKey, fundingSource, onComplete]);
 
   if (config === null) return <p className="demo-note"><ShieldCheck size={14}/> Checking PayPal checkout configuration…</p>;
-  if (!config.configured) return <div className="gateway-pending"><b>PayPal checkout setup is not finished</b><span>The store administrator must configure PayPal credentials and Cloudflare order storage before checkout is available.</span></div>;
+  if (!config.configured) return <div className="gateway-pending"><b>PayPal setup is not finished</b><span>Sign in through Store admin and add your PayPal {config.environment === 'live' ? 'Live' : 'Sandbox'} app credentials.</span></div>;
   return <div className="paypal-live"><div ref={host}/>{error && <p className="paypal-error" role="alert">{error}</p>}<p className="demo-note"><ShieldCheck size={14}/> Secured by PayPal. Your payment is captured after PayPal approval.</p></div>;
 }

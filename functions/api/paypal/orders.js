@@ -37,8 +37,6 @@ export async function onRequestPost({ request, env }) {
     await env.ORDERS_DB.prepare(
       'INSERT INTO pending_orders (order_id, amount, items_json, created_at) VALUES (?, ?, ?, ?)'
     ).bind(payload.id, total, JSON.stringify(items), new Date().toISOString()).run();
-    await env.ORDERS_DB.prepare('DELETE FROM pending_orders WHERE created_at < ?')
-      .bind(new Date(Date.now() - 30 * 60 * 1000).toISOString()).run();
     return json({ id: payload.id }, 201);
   } catch (error) {
     return errorResponse(error);

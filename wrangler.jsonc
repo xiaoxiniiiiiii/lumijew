@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "lumijew",
+  "compatibility_date": "2026-11-11",
+  "pages_build_output_dir": "./dist",
+  "d1_databases": [
+    {
+      "binding": "ORDERS_DB",
+      "database_name": "lumijew-orders",
+      "database_id": "51c33346-0d24-4347-bdbc-838c03c05383"
+    }
+  ],
+  "vars": {
+    "PAYPAL_ENV": "live",
+    "PAYPAL_CLIENT_ID": "BAAsWWwROWBHxafYI6Lk1fc15Ik5npkRwVfyY9VQjaGh-SFyknSOF_IIWsXdYSEYxK6Ei-Uhhzn7mW6sHk",
+    "ADMIN_USERNAME": "admin@rubaoge.local"
+  }
+}

@@ -43,14 +43,12 @@ export function getCatalogItems(items) {
     throw Object.assign(new Error('Your shopping bag is empty or invalid.'), { status: 400 });
   }
   const result = [];
-  const seen = new Set();
   for (const item of items) {
     const product = products.find(entry => entry.id === item.id);
     const quantity = Number(item.quantity);
-    if (!product || seen.has(product.id) || !Number.isSafeInteger(quantity) || quantity < product.moq || quantity > 1000 || quantity % product.moq !== 0) {
+    if (!product || !Number.isSafeInteger(quantity) || quantity < product.moq || quantity > 1000 || quantity % product.moq !== 0) {
       throw Object.assign(new Error('An item or its wholesale minimum quantity is invalid.'), { status: 400 });
     }
-    seen.add(product.id);
     result.push({
       name: product.name,
       sku: product.sku,
